@@ -21,9 +21,9 @@
 static boolean cppmNewValues = false;
 
 int16_t rcData[RC_CHANS] = {0,};
-uint8_t protocol = SH_602X;
 
 void setup() {
+	pinMode( PS0, INPUT_PULLUP);
 	irInit();
 	cppmInit();
 #if DEBUG
@@ -34,22 +34,42 @@ void setup() {
 void loop() {
 #if DEBUG
 	static unsigned long lastDebug = 0;
-	if(millis()-lastDebug > 1000)
-	{
+	if(millis()-lastDebug > 1000) {
 		lastDebug = millis();
+		Serial.println("CPPM input\n-----------");		
+		Serial.print("Throttle : ");
 		Serial.println(rcData[THROTTLE]);
+		Serial.print("Pitch : ");
+		Serial.println(rcData[PITCH]);
+		Serial.print("Roll : ");
+		Serial.println(rcData[ROLL]);
+		Serial.print("Yaw : ");
+		Serial.println(rcData[YAW]);
+		Serial.print("AUX1 : ");
+		Serial.println(rcData[AUX1]);
+		Serial.println();
 	}
 #endif
 	if (cppmNewValues)
 		cppmGetInput();
 	
-	switch(protocol) {
+	switch(currentProtocol()) {
 	case SH_602X:
 		irSHsendPacket(shBuildPacket());
 		delay(40);
+		break;
+	case SYMA_S107_32:
+		irSYsendPacket(syBuildPacket());
+		delay(100);
 		break;
 	default: 
 		;
 	}
 }
 
+uint8_t currentProtocol()
+{
+	if(!digitalRead(PS0))
+		return SYMA_S107_32;
+	return SH_602X;
+}

@@ -12,6 +12,7 @@ processor. Pinouts are defined in config.h
 Currently supported helicopters:
 
 - San Huan 6020, 6020-1, 6023-1, 6025-1
+- Syma S107(g) 2 bands version (experimental, connect D12 to ground to enable)
 
 Other protocols might be added later
 

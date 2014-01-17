@@ -41,6 +41,8 @@ void irInit()
 	OCR2B = s >> 1;
 }
 
+// San Huan
+
 void irSHsendHeader() {
 	IR_HIGH;
 	delayMicroseconds(3750);
@@ -65,8 +67,7 @@ void irSHsendOne() {
 	IR_HIGH;
 }
 
-void irSHsendPacket(uint32_t packet)
-{
+void irSHsendPacket(uint32_t packet) {
 	noInterrupts();
 	irSHsendHeader();
 	for(uint8_t b=32; b>0; b--)
@@ -78,3 +79,41 @@ void irSHsendPacket(uint32_t packet)
 	interrupts();
 }
 
+// Syma
+
+void irSYsendHeader() {
+	IR_HIGH;
+	delayMicroseconds(2000);
+	IR_LOW;
+	delayMicroseconds(2000);
+	IR_HIGH;
+	//delayMicroseconds(380);
+}
+
+void irSYsendZero() {
+	IR_HIGH;
+	delayMicroseconds(380);
+	IR_LOW;
+	delayMicroseconds(220);
+	IR_HIGH;
+}
+
+void irSYsendOne() {
+	IR_HIGH;
+	delayMicroseconds(320);
+	IR_LOW;
+	delayMicroseconds(600);
+	IR_HIGH;
+}
+
+void irSYsendPacket(uint32_t packet) {
+	noInterrupts();
+	irSYsendHeader();
+	for(uint8_t b=32; b>0; b--)
+		if( packet & (uint32_t)1<<(b-1))
+			irSYsendOne();
+		else
+			irSYsendZero();
+	IR_LOW;
+	interrupts();
+}
