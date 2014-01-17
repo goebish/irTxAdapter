@@ -114,6 +114,7 @@ void irSYsendPacket(uint32_t packet) {
 			irSYsendOne();
 		else
 			irSYsendZero();
+	delayMicroseconds(380);
 	IR_LOW;
 	interrupts();
 }
