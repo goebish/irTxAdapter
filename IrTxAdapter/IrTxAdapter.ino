@@ -24,8 +24,15 @@ int16_t rcData[RC_CHANS] = {0,};
 
 void setup() {
 	pinMode( PS0, INPUT_PULLUP);
+	pinMode( STATUS_LED, OUTPUT);
+	digitalWrite( STATUS_LED, HIGH);
 	irInit();
+#if USE_ADC
+	adcInit();
+#else
 	cppmInit();
+#endif
+
 #if DEBUG
 	Serial.begin(19200);
 #endif
@@ -50,8 +57,13 @@ void loop() {
 		Serial.println();
 	}
 #endif
+
+#if USE_ADC
+	adcGetRCData();
+#else
 	if (cppmNewValues)
 		cppmGetInput();
+#endif
 	
 	switch(currentProtocol()) {
 	case SH_602X:

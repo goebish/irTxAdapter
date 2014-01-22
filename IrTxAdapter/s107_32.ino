@@ -15,7 +15,7 @@
  */
 
 /*
- Syma S107(g) genuine IR protocol:
+ Syma "genuine" S107(g) IR protocol:
 
  carrier frequency: 38kHz or 57KHz
  (all timings in µs)
@@ -26,10 +26,8 @@
  end: 140000 space
  length of data: 32 bits
 
-yaw, pitch, throttle, trim
-
     byte0  |   byte1   |   byte 2  |   byte3
- A BBBBBBB | C DDDDDDD | E FFFFFFF | II JJJJJJ
+ A BBBBBBB | C DDDDDDD | E FFFFFFF | I JJJJJJJ
 
  A = always 0
  B = yaw (106=full left - 8=full right)
@@ -38,7 +36,8 @@ yaw, pitch, throttle, trim
  E = always 1
  F = throttle (11=0% -  125=100%)
  I = always 0 ?
- J = yaw trim ?
+ J = yaw trim ? 
+
 */
 
 uint32_t syBuildPacket() {
