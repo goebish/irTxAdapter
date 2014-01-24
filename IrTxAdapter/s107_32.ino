@@ -22,7 +22,7 @@
  constant packet length
  header: 2000 pulse, 2000 space, 1000 pulse
  zero: 380 pulse, 220 space
- one: 220 pulse, 600 space
+ one: 320 pulse, 600 space
  end: 140000 space
  length of data: 32 bits
 
@@ -32,19 +32,19 @@
  A = always 0
  B = yaw (106=full left - 8=full right)
  C = always 0
- D = pitch (126=full backward 1=full forward)
- E = always 1
+ D = pitch (126=full backward, 1=full forward)
+ E = channel (1=A, 0=B ?)
  F = throttle (11=0% -  125=100%)
- I = always 0 ?
- J = yaw trim ? 
+ I = always 0
+ J = yaw trim (127=full left, 1=full right) 
 
 */
 
 uint32_t syBuildPacket() {
 	uint8_t packet[4]={0,0,0,0};
-	packet[0] = map(rcData[YAW], PPM_MIN, PPM_MAX, 106, 8);
+	packet[0] = map(rcData[YAW], PPM_MIN, PPM_MAX, 107, 8);
 	packet[1] = map(rcData[PITCH], PPM_MIN, PPM_MAX, 126, 1);
 	packet[2] = 0x80 | map(rcData[THROTTLE], PPM_MIN, PPM_MAX, 11, 125);
-	packet[3] = 52; // yaw trim middle position ?
+	packet[3] = map(rcData[AUX1], PPM_MIN, PPM_MAX, 127, 1);
 	return (uint32_t)(((uint32_t)packet[0]<<24) | ((uint32_t)packet[1]<<16) | ((uint16_t)packet[2]<<8) | packet[3]);
 }
