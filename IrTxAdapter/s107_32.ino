@@ -44,7 +44,7 @@ uint32_t syBuildPacket() {
 	uint8_t packet[4]={0,0,0,0};
 	packet[0] = map(rcData[YAW], PPM_MIN, PPM_MAX, 107, 8);
 	packet[1] = map(rcData[PITCH], PPM_MIN, PPM_MAX, 126, 1);
-	packet[2] = 0x80 | map(rcData[THROTTLE], PPM_MIN, PPM_MAX, 11, 125);
+	packet[2] = 0x80 | map(rcData[THROTTLE], PPM_MIN, PPM_MAX, 5, 125);
 	packet[3] = map(rcData[AUX1], PPM_MIN, PPM_MAX, 127, 1);
 	return (uint32_t)(((uint32_t)packet[0]<<24) | ((uint32_t)packet[1]<<16) | ((uint16_t)packet[2]<<8) | packet[3]);
 }
