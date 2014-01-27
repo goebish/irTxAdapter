@@ -34,7 +34,7 @@
  C = always 0
  D = pitch (126=full backward, 1=full forward)
  E = band (1=A, 0=B ?)
- F = throttle (11=0% -  125=100%)
+ F = throttle (0-125)
  I = always 0
  J = yaw trim (127=full left, 1=full right) 
 
@@ -49,7 +49,7 @@ uint32_t syBuildPacket() {
 	uint8_t packet[4]={0,0,0,0};
 	packet[0] = map(rcData[YAW], PPM_MIN, PPM_MAX, 107, 8);
 	packet[1] = map(rcData[PITCH], PPM_MIN, PPM_MAX, 126, 1);
-	packet[2] = SYBAND_A | map(rcData[THROTTLE], PPM_MIN, PPM_MAX, 5, 125);
+	packet[2] = SYBAND_A | map(rcData[THROTTLE], PPM_MIN, PPM_MAX, 0, 125);
 	packet[3] = map(rcData[AUX1], PPM_MIN, PPM_MAX, 127, 1);
 #if DYNAMIC_YAW_TRIM
 	if(rcData[YAW]<MIDRC) 
