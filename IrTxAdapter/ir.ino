@@ -21,7 +21,7 @@
 	#define IR_HIGH TCCR2A &= ~_BV(COM2A1)
 	#define IR_LOW TCCR2A |= _BV(COM2A1)
 #else
-	#error IR_PIN must be D3 or D11 !
+	#error "IR_PIN must be D3 or D11 !"
 #endif
 
 void irInit()
@@ -32,7 +32,7 @@ void irInit()
 	TCCR2A = _BV(WGM20);
 #if IR_PIN == 3
 	byte s = 8000 / (IR_CLOCK_RATE / 1000);
-#else // pin 11
+#elif IR_PIN == 11 
 	byte s = 8000 / ((IR_CLOCK_RATE<<1) / 1000);
 	TCCR2A |= _BV(COM2A0);
 #endif
@@ -87,7 +87,6 @@ void irSYsendHeader() {
 	IR_LOW;
 	delayMicroseconds(2000);
 	IR_HIGH;
-	//delayMicroseconds(380);
 }
 
 void irSYsendZero() {

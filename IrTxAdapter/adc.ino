@@ -41,8 +41,10 @@ void adcInit() {
 }
 
 void adcCalibrate() {
-	while(digitalRead(ADC_BUTTON1)==LOW) 
-		delay(50);
+	while(digitalRead(ADC_BUTTON1)==LOW) {
+		digitalWrite( STATUS_LED, digitalRead(STATUS_LED)==LOW ? HIGH : LOW);
+		delay(333);
+	}
 	uint16_t val;
 	calib.THROTTLE_MIN = 1023;
 	calib.THROTTLE_MAX = 0;
@@ -94,12 +96,12 @@ void adcCalibrate() {
 	digitalWrite( STATUS_LED, HIGH);
 }
 
-void adcGetRCData() {
-	rcData[THROTTLE] = map( analogRead(ADC_THROTTLE), calib.THROTTLE_MIN, calib.THROTTLE_MAX, PPM_MIN, PPM_MAX);
-	rcData[ROLL] = map( analogRead(ADC_ROLL), calib.ROLL_MIN, calib.ROLL_MAX, PPM_MIN, PPM_MAX);
-	rcData[PITCH] = map( analogRead(ADC_PITCH), calib.PITCH_MIN, calib.PITCH_MAX, PPM_MIN, PPM_MAX);
-	rcData[YAW] = map( analogRead(ADC_YAW), calib.YAW_MIN, calib.YAW_MAX, PPM_MIN, PPM_MAX);
-	rcData[AUX1] = map( analogRead(ADC_AUX1), calib.AUX1_MIN, calib.AUX1_MAX, PPM_MIN, PPM_MAX);
+void adcGetInput() {
+	rcData[THROTTLE] = constrain(map( analogRead(ADC_THROTTLE), calib.THROTTLE_MIN, calib.THROTTLE_MAX, PPM_MIN, PPM_MAX), PPM_MIN, PPM_MAX);
+	rcData[ROLL] = constrain(map( analogRead(ADC_ROLL), calib.ROLL_MIN, calib.ROLL_MAX, PPM_MIN, PPM_MAX), PPM_MIN, PPM_MAX);
+	rcData[PITCH] = constrain(map( analogRead(ADC_PITCH), calib.PITCH_MIN, calib.PITCH_MAX, PPM_MIN, PPM_MAX), PPM_MIN, PPM_MAX);
+	rcData[YAW] = constrain(map( analogRead(ADC_YAW), calib.YAW_MIN, calib.YAW_MAX, PPM_MIN, PPM_MAX), PPM_MIN, PPM_MAX);
+	rcData[AUX1] = constrain(map( analogRead(ADC_AUX1), calib.AUX1_MIN, calib.AUX1_MAX, PPM_MIN, PPM_MAX), PPM_MIN, PPM_MAX);
 }
 
 void adcLoadCalibration() {

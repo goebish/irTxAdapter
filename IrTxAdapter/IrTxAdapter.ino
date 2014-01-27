@@ -59,12 +59,12 @@ void loop() {
 #endif
 
 #if USE_ADC
-	adcGetRCData();
+	adcGetInput();
 #else
-	if (cppmNewValues)
+	if( cppmNewValues)
 		cppmGetInput();
 #endif
-	
+	// delay between 2 packets must be 40ms minimum in CPPM mode
 	switch(currentProtocol()) {
 	case SH_602X:
 		irSHsendPacket(shBuildPacket());
