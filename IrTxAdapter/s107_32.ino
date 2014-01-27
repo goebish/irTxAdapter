@@ -30,13 +30,13 @@
  A BBBBBBB | C DDDDDDD | E FFFFFFF | I JJJJJJJ
 
  A = always 0
- B = yaw (106=full left - 8=full right)
+ B = yaw (127=full left - 0=full right) center depends of yaw trim
  C = always 0
- D = pitch (126=full backward, 1=full forward)
+ D = pitch (127=full backward, 0=full forward)
  E = band (1=A, 0=B ?)
- F = throttle (0-125)
+ F = throttle (0-127)
  I = always 0
- J = yaw trim (127=full left, 1=full right) 
+ J = yaw trim (127=full left, 0=full right), looks like the RX does not use this value, but the TX use it internally to adjust yaw center and window 
 
 */
 
@@ -46,16 +46,18 @@ enum {
 };
 
 uint32_t syBuildPacket() {
-	uint8_t packet[4]={0,0,0,0};
-	packet[0] = map(rcData[YAW], PPM_MIN, PPM_MAX, 107, 8);
-	packet[1] = map(rcData[PITCH], PPM_MIN, PPM_MAX, 126, 1);
-	packet[2] = SYBAND_A | map(rcData[THROTTLE], PPM_MIN, PPM_MAX, 0, 125);
-	packet[3] = map(rcData[AUX1], PPM_MIN, PPM_MAX, 127, 1);
-#if DYNAMIC_YAW_TRIM
-	if(rcData[YAW]<MIDRC) 
-		packet[3] = map(rcData[YAW], PPM_MIN, MIDRC, 127, packet[3]) & 0x7F;
-	else
-		packet[3] = map(rcData[YAW], MIDRC, PPM_MAX, packet[3], 1) & 0x7F;
+	int8_t packet[4]={0,0,0,0};
+	packet[1] = map(rcData[PITCH], PPM_MIN, PPM_MAX, 127, 0);
+	packet[2] = SYBAND_A | map(rcData[THROTTLE], PPM_MIN, PPM_MAX, 0, 127);
+	packet[3] = map(rcData[AUX1], PPM_MIN, PPM_MAX, 127, 0);
+	int16_t yaw_center = map( packet[3], 0, 127, 45, 85);
+	bool windowed=true;
+#ifdef DYNAMIC_YAW_TRIM
+	windowed=false;
 #endif
+	if(rcData[YAW] <= MIDRC)
+		packet[0] = map( rcData[YAW], PPM_MIN, MIDRC, windowed ? constrain(yaw_center+45, 0, 127) : 127, yaw_center);
+	else
+		packet[0] = map( rcData[YAW], MIDRC, PPM_MAX, yaw_center, windowed ? constrain(yaw_center-45, 0, 127) : 0);
 	return (uint32_t)(((uint32_t)packet[0]<<24) | ((uint32_t)packet[1]<<16) | ((uint16_t)packet[2]<<8) | packet[3]);
 }
