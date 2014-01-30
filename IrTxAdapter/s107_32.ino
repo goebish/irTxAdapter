@@ -50,7 +50,7 @@ uint32_t syBuildPacket() {
 	packet[1] = map(rcData[PITCH], PPM_MIN, PPM_MAX, 127, 0);
 	packet[2] = SYBAND_A | map(rcData[THROTTLE], PPM_MIN, PPM_MAX, 0, 127);
 	packet[3] = map(rcData[AUX1], PPM_MIN, PPM_MAX, 127, 0);
-	int16_t yaw_center = map( packet[3], 0, 127, 45, 85);
+	int16_t yaw_center = map( packet[3], 0, 127, 45, 82);
 	bool windowed=true;
 #ifdef DYNAMIC_YAW_TRIM
 	windowed=false;
