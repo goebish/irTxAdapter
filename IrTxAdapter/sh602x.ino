@@ -42,27 +42,37 @@
 
 */
 
-uint8_t shpacket[4];
+
 
 enum {
-	BAND_A = (uint8_t)0xc0,
-	BAND_B = (uint8_t)0x80,
-	BAND_C = (uint8_t)0x40
+	SHBAND_A = (uint8_t)0xc0,
+	SHBAND_B = (uint8_t)0x80,
+	SHBAND_C = (uint8_t)0x40
 };
 
 uint32_t shBuildPacket() {
-	memset(&shpacket,0,4);
-	shpacket[0] = map(rcData[THROTTLE], PPM_MIN, PPM_MAX, 0, 120); // throttle
-	shpacket[1] = map(rcData[YAW], MIDRC, rcData[YAW] > MIDRC ? PPM_MAX : PPM_MIN, 0, 15) << 4; // yaw
-	shpacket[1] |= map(rcData[PITCH], MIDRC, rcData[PITCH] > MIDRC ? PPM_MAX : PPM_MIN, 0, 15); // pitch
-	if( rcData[YAW] <= MIDRC)
-		shpacket[2] |= (1<<7); // yaw direction
-	if( rcData[PITCH] <= MIDRC)
-		shpacket[2] |= (1<<6); // pitch direction
+	uint8_t packet[4] = {0,0,0,0};
+	packet[0] = map(rcData[THROTTLE], PPM_MIN, PPM_MAX, 0, 120); // throttle
+	packet[1] = map(rcData[YAW], MIDRC, rcData[YAW] > MIDRC ? PPM_MAX : PPM_MIN, 0, 15) << 4; // yaw
+	packet[1] |= map(rcData[PITCH], MIDRC, rcData[PITCH] > MIDRC ? PPM_MAX : PPM_MIN, 0, 15); // pitch
 	if( rcData[AUX1] > MIDRC)
-		shpacket[2] |= (1<<5); // yaw trim direction
-	shpacket[2] |= map(rcData[AUX1], MIDRC, rcData[AUX1] > MIDRC ? PPM_MAX : PPM_MIN, 0, 31); // yaw trim
-	shpacket[3] = BAND_A | ((shpacket[0] + shpacket[1] + shpacket[2] + 0x0F) & 0x3F); // channel + checksum
-	return (uint32_t)(((uint32_t)shpacket[0]<<24) | ((uint32_t)shpacket[1]<<16) | ((uint16_t)shpacket[2]<<8) | shpacket[3]);
+		packet[2] |= (1<<5); // yaw trim direction
+	packet[2] |= map(rcData[AUX1], MIDRC, rcData[AUX1] > MIDRC ? PPM_MAX : PPM_MIN, 0, 31); // yaw trim
+#if DYNAMIC_YAW_TRIM	
+	int yawtrim = rcData[AUX1]<MIDRC ? (int)-(packet[2] & 0x1F) : (int)(packet[2] & 0x1F); // [-31;31]
+	packet[2] &= ~0x3F;
+	if(rcData[YAW]<MIDRC) 
+		yawtrim = map(rcData[YAW], PPM_MIN, MIDRC, -31, yawtrim); 
+	else
+		yawtrim = map(rcData[YAW], PPM_MAX,  MIDRC, 31, yawtrim);
+	if(yawtrim <=0)
+		packet[2] |= (1<<5);
+	packet[2] |= abs(yawtrim) & 0x1F;
+#endif
+	if( rcData[YAW] <= MIDRC)
+		packet[2] |= (1<<7); // yaw direction
+	if( rcData[PITCH] <= MIDRC)
+		packet[2] |= (1<<6); // pitch direction
+	packet[3] = SHBAND_A | ((packet[0] + packet[1] + packet[2] + 0x0F) & 0x3F); // band + checksum
+	return (uint32_t)(((uint32_t)packet[0]<<24) | ((uint32_t)packet[1]<<16) | ((uint16_t)packet[2]<<8) | packet[3]);
 }
-

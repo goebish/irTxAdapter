@@ -14,8 +14,14 @@
  
  */
 
+#if !(USE_ADC)
 #if (PPM_PIN != 2) && (PPM_PIN != 3)
-  #error PPM_PIN must be D2 or D3
+  #error "PPM_PIN must be D2 or D3"
+#endif
+
+#if (IR_PIN == 3) && (PPM_PIN == 3) 
+	#error "IR_PIN and PPM_PIN cannot use the same pin"
+#endif
 #endif
 
 #define WidthOK(w) ((w>=900) && (w<=2200))
