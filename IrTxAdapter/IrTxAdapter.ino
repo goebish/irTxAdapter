@@ -31,6 +31,8 @@ void setup() {
 	adcInit();
 #else
 	cppmInit();
+	while (!cppmNewValues) // get at least one good CPPM frame
+		cppmGetInput();
 #endif
 
 #if DEBUG
