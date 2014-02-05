@@ -39,6 +39,8 @@ uint32_t wlBuildPacket() {
 	uint8_t packet[4] = {0,0,0,0};
 	// throttle
 	packet[0] = map(rcData[THROTTLE], PPM_MIN, PPM_MAX, 0, 127);
+	if(packet[0] == 0)
+		packet[0] |= 0x80;
 	// yaw
 	packet[1] = map(rcData[YAW], PPM_MIN, PPM_MAX, 1, 15) << 4;
 	// pitch
