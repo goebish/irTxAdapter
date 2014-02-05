@@ -117,3 +117,29 @@ void irSYsendPacket(uint32_t packet) {
 	IR_LOW;
 	interrupts();
 }
+
+// WLToys
+void irWLsendPacket(uint32_t packet) {
+	noInterrupts();
+	bool state = false;
+	// header
+	IR_HIGH;
+	delayMicroseconds(1450);
+	IR_LOW;
+	// packet
+	for(uint8_t b=32; b>0; b--) {
+		if( packet & (uint32_t)1<<(b-1)) 
+			delayMicroseconds(800);			
+		else
+			delayMicroseconds(300);
+		if(state) {
+			IR_LOW;	
+			state=false;
+		} else {
+			IR_HIGH;
+			state=true;
+		}
+	}
+	IR_LOW;
+	interrupts();
+}

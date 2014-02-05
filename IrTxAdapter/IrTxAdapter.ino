@@ -24,6 +24,7 @@ int16_t rcData[RC_CHANS] = {0,};
 
 void setup() {
 	pinMode( PS0, INPUT_PULLUP);
+	pinMode( PS1, INPUT_PULLUP);
 	pinMode( STATUS_LED, OUTPUT);
 	digitalWrite( STATUS_LED, HIGH);
 	irInit();
@@ -76,6 +77,9 @@ void loop() {
 		irSYsendPacket(syBuildPacket());
 		delay(100);
 		break;
+	case WLTOYS:
+		irWLsendPacket(wlBuildPacket());
+		delay(70);
 	default: 
 		;
 	}
@@ -85,5 +89,7 @@ uint8_t currentProtocol()
 {
 	if(!digitalRead(PS0))
 		return SYMA_S107_32;
+	if(!digitalRead(PS1))
+		return WLTOYS;
 	return SH_602X;
 }

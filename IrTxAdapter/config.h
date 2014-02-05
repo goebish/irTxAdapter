@@ -9,6 +9,7 @@
 
 #define STATUS_LED 13
 #define PS0 12 // protocol selection pin 0, active low (S107)
+#define PS1 10 // protocol selection pin 1, active low (wltoys)
 #define DYNAMIC_YAW_TRIM false // (experimental)
 #define DEBUG false // enable serial output
 
@@ -55,6 +56,7 @@ enum e_rc { // must be in this order
 enum e_protocol { 
 	SH_602X,	  // San Huan 6020, 6023, 6025 series
 	SYMA_S107_32, // 32 bits "genuine" S107 protocol
+	WLTOYS,
 };
 
 #if !defined(__AVR_ATmega328P__) || F_CPU != 16000000
