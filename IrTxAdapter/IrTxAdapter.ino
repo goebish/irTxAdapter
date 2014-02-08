@@ -42,7 +42,9 @@ void setup() {
 }
 
 void loop() {
+	
 #if DEBUG
+	const char * protocols[] = {"San Huan","Syma","WLToys"};
 	static unsigned long lastDebug = 0;
 	if(millis()-lastDebug > 1000) {
 		lastDebug = millis();
@@ -57,6 +59,8 @@ void loop() {
 		Serial.println(rcData[YAW]);
 		Serial.print("AUX1 : ");
 		Serial.println(rcData[AUX1]);
+		Serial.print("Protocol :");
+		Serial.println(protocols[currentProtocol()]);
 		Serial.println();
 	}
 #endif
