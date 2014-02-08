@@ -128,10 +128,11 @@ void irWLsendPacket(uint32_t packet) {
 	IR_LOW;
 	// packet
 	for(uint8_t b=32; b>0; b--) {
-		if( packet & (uint32_t)1<<(b-1)) 
-			delayMicroseconds(800);			
-		else
-			delayMicroseconds(300);
+		if( packet & (uint32_t)1<<(b-1)) {
+			delayMicroseconds(state ? 800 : 800);			
+		} else {
+			delayMicroseconds(state ? 350 : 300);
+		}
 		if(state) {
 			IR_LOW;	
 			state=false;
