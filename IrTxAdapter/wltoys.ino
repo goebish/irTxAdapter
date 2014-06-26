@@ -23,30 +23,33 @@
  one = 800 µs
  70ms between packets
  
- ATTTTTTT YYYYPPPP ???????? ?D?BCCCC
+ ATTTTTTT YYYYPPPP XX?????? ?D?BCCCC
 
  A = 0, 1 if 0% throttle
  T = throttle ( 0 - 127 )
  Y = yaw ( left = 1, center = 8, right = 15 )
  P = pitch ( backward = 1, center = 8, forward = 15)
+ X = band ( A = 01, B = 10, C = 11 )
  D = boost ( 1 = on )
  B = bubbles ( 1 = on )
  C = checksum = (N1+N2+N3+N4+N5+N6+N7+1)%16
-
+ TODO : checksum calculation is wrong, sometimes the result should be 1 less
 */
 
 uint32_t wlBuildPacket() {
 	uint8_t packet[4] = {0,0,0,0};
+	
 	// throttle
 	packet[0] = map(rcData[THROTTLE], PPM_MIN, PPM_MAX, 0, 127);
-	if(packet[0] == 0)
-		packet[0] |= 0x80;
+	if(packet[0] <5 ) // idle
+		return (int32_t) 0b10000000100010000100000000001100; // as captured
+		//packet[0] |= 0x80;
 	// yaw
 	packet[1] = map(rcData[YAW], PPM_MIN, PPM_MAX, 1, 15) << 4;
 	// pitch
 	packet[1] |= map(rcData[PITCH], PPM_MIN, PPM_MAX, 1, 15);
 	// unknown (band + ???)
-	packet[2] = 64;
+	packet[2] |= 64; // BAND A
 	// options
 	// TODO: add channel/buttons for boost, leds, bubbles ...
 	
