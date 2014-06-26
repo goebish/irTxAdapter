@@ -19,7 +19,7 @@ Currently supported helicopters:
 
 - San Huan 6020, 6020-1, 6023-1, 6025-1
 - Syma S107(g) 2 bands version (ground D12 to enable)
-- WLToys EV-05 and similars (connect D10 to enable) 
+- WLToys EV-05 and similars (ground D10 to enable) 
 
 Other protocols might be added later.
 
